@@ -1,0 +1,24 @@
+---
+name: "NOVA 01"
+author: "ThaiRC (thairc-dev)"
+version: "1.0.0"
+license: "GPL-3.0-or-later"
+renderer: "python -m nova01"
+portable_config: "config.yaml"
+
+display:
+  DISPLAY_SIZE: 3.5"
+  DISPLAY_ORIENTATION: landscape
+  DISPLAY_RESOLUTION: 480x320
+  DISPLAY_RGB_LED: 0, 229, 255
+
+metrics:
+  - System clock, date, location and 5-day weather forecast
+  - Default-route network throughput (UP & DOWN MB/s)
+  - CPU percentage, circular arc gauge, frequency, and 60s history graph
+  - RAM percentage, circular arc gauge, segment bar, and used/total GiB
+  - SSD percentage, circular arc gauge, segment bar, and used/total GB
+  - Fan RPM and SILENT/ACTIVE status
+  - CPU/GPU temperature with mini trend line
+  - System uptime with mini trend line
+  - Active process count with mini trend line

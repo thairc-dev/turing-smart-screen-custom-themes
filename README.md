@@ -20,7 +20,17 @@ If you find these themes useful on your desk, feel free to support future update
 
 ## 🌟 Featured Flagship Themes
 
-### 1. 📊 TRUE VIEW 26
+### 1. 🌌 NOVA 01
+A sleek, modern dark-mode dashboard with pure obsidian background, smooth sans-serif clock typography, centered weather widget, and 5-day forecast.
+- **Pure Obsidian Aesthetics**: `#000000` pitch black background with `#0A0C12` charcoal card panels.
+- **Centered Weather & 5-Day Forecast**: Large weather icon, current temperature, high/low/humidity, and full 5-day forecast row (`THU`, `FRI`, `SAT`, `SUN`, `MON`).
+- **Gradient Glow Wave Graphs**: Hardware-accelerated glowing wave graphs for CPU, Temp, Uptime, and Processes.
+
+![NOVA 01 Preview](res/themes/NOVA_01/preview.png)
+
+---
+
+### 2. 📊 TRUE VIEW 26
 A zero-duplication, highly balanced system monitoring theme designed for maximum readability.
 - **GPU / LOAD 1M / PROCS**: Middle row replaces redundant metrics with genuine GPU utilization, 1-minute OS load average, and active process count.
 - **Spacious Typography**: Fine-tuned font spacing (`f14`) preventing text overflow or cramped numbers.
@@ -30,7 +40,7 @@ A zero-duplication, highly balanced system monitoring theme designed for maximum
 
 ---
 
-### 2. ⚡ NEXUS 26
+### 3. ⚡ NEXUS 26
 A futuristic Cyberpunk-inspired neon theme featuring real-time visualizers and a dynamic health ring.
 - **Quantum Pulse Core**: Central health ring automatically classifies system state (`GOOD`, `HEAVY`, `MEMORY`, `DISK`, `HOT`).
 - **Smooth Wave Graphs**: Hardware-accelerated smooth filled gradient graphs for CPU and GPU.
@@ -40,7 +50,7 @@ A futuristic Cyberpunk-inspired neon theme featuring real-time visualizers and a
 
 ---
 
-### 3. 🍃 NEXUS MINIMAL
+### 4. 🍃 NEXUS MINIMAL
 A clean, lightweight, minimalist theme focusing on key performance indicators.
 - **High Efficiency**: Minimalist aesthetic with ultra-low CPU footprint.
 - **Essential Metrics**: Large digital clock, Uptime, CPU 60s history graph, RAM, SSD, Fan, Temp, Load, and Processes.
@@ -70,7 +80,10 @@ A clean, lightweight, minimalist theme focusing on key performance indicators.
    ```
 2. Run the automated installer script for your desired theme:
    ```bash
-   # Install TRUE VIEW 26
+   # Install NOVA 01
+   zsh res/themes/NOVA_01/installers/install-macos.sh
+
+   # Or install TRUE VIEW 26
    zsh res/themes/TRUE_VIEW_26/installers/install-macos.sh
 
    # Or install NEXUS 26
@@ -84,7 +97,7 @@ A clean, lightweight, minimalist theme focusing on key performance indicators.
 Open PowerShell as Administrator:
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force
-.\res\themes\TRUE_VIEW_26\installers\install-windows.ps1
+.\res\themes\NOVA_01\installers\install-windows.ps1
 ```
 
 ---
@@ -95,10 +108,10 @@ You can also run any theme manually in standalone mode:
 
 ```bash
 # Preview mode (generates 480x320 PNG snapshot without a screen)
-PYTHONPATH=res/themes/TRUE_VIEW_26 python3 -m trueview26 --preview preview.png
+PYTHONPATH=res/themes/NOVA_01 python3 -m nova01 --preview preview.png
 
 # Direct execution to USB display
-PYTHONPATH=res/themes/TRUE_VIEW_26 python3 res/themes/TRUE_VIEW_26/run_trueview26.py
+PYTHONPATH=res/themes/NOVA_01 python3 res/themes/NOVA_01/run_nova01.py
 ```
 
 ---

@@ -1,0 +1,23 @@
+display:
+  width: 480
+  height: 320
+  orientation: landscape
+  fps: 10
+  stats_interval: 0.5
+  brightness: 100
+  clean_on_startup: true
+
+device:
+  transport: auto
+  chunk_size: 4096
+  vid: 0x1a86
+  pid: 0x5722
+
+weather:
+  location: ""
+  units: metric
+  update_interval_minutes: 20
+
+logging:
+  level: INFO
+  file: logs/nova01.log
