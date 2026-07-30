@@ -1,0 +1,5 @@
+Pillow>=11,<13
+psutil>=6,<8
+pyserial>=3.5,<4
+PyUSB>=1.2,<2
+PyYAML>=6,<7

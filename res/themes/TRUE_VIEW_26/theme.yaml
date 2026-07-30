@@ -1,0 +1,21 @@
+---
+name: "TRUE VIEW 26"
+author: "ThaiRC (thairc-dev)"
+version: "0.1.0"
+license: "GPL-3.0-or-later"
+renderer: "python -m trueview26"
+portable_config: "config.yaml"
+
+display:
+  DISPLAY_SIZE: 3.5"
+  DISPLAY_ORIENTATION: landscape
+  DISPLAY_RESOLUTION: 480x320
+  DISPLAY_RGB_LED: 255, 255, 255
+
+metrics:
+  - CPU utilization, frequency and temperature
+  - RAM utilization and GiB
+  - APFS/container-aware storage utilization and GB
+  - Fan RPM
+  - Default-route network throughput
+  - System uptime, model, OS, clock and date

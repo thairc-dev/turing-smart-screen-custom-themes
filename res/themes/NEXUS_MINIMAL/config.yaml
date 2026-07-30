@@ -1,0 +1,34 @@
+display:
+  width: 480
+  height: 320
+  brightness: 100
+  fps: 2
+  stats_interval: 0.8
+  reconnect_interval: 3
+  # Clear native portrait GRAM before restoring the landscape orientation.
+  clean_on_startup: true
+
+device:
+  # auto = libusb on macOS, serial/COM on Windows and Linux
+  transport: auto
+  port: AUTO
+  vendor_id: 0x1a86
+  product_id: 0x5722
+  serial_number: USB35INCHIPSV2
+  interface:
+  endpoint:
+  chunk_size: 4096
+  allow_unverified_device: false
+
+metrics:
+  interval: 0.5
+  # auto selects the interface carrying the default internet route.
+  network_interface: auto
+
+assets_dir: .
+fonts_dir: fonts
+
+logging:
+  level: INFO
+  # Rotating 1 MB log with 3 backups.
+  file: logs/nexusminimal.log

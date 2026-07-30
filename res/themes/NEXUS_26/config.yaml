@@ -1,0 +1,40 @@
+display:
+  width: 480
+  height: 320
+  brightness: 100
+  fps: 10
+  stats_interval: 0.8
+  reconnect_interval: 3
+  clean_on_startup: true
+
+device:
+  # auto = libusb on macOS, serial/COM on Windows and Linux
+  transport: auto
+  port: AUTO
+  vendor_id: 0x1a86
+  product_id: 0x5722
+  serial_number: USB35INCHIPSV2
+  interface:
+  endpoint:
+  chunk_size: 4096
+  allow_unverified_device: false
+
+weather:
+  enabled: true
+  # Empty lets wttr.in infer the location. Set e.g. "Ho Chi Minh City".
+  location: ""
+  refresh_seconds: 600
+  timeout_seconds: 5
+
+metrics:
+  interval: 0.5
+  # auto selects the interface carrying the default internet route.
+  network_interface: auto
+
+assets_dir: .
+fonts_dir: fonts
+
+logging:
+  level: INFO
+  # Rotating 1 MB log with 3 backups.
+  file: logs/nexus26.log
