@@ -340,8 +340,14 @@ def render_frame(
         location_label = location_label[:11] + "…"
     _text_right(draw, 238, 174, location_label, font=f8, fill=MUTED)
     draw_weather(draw, 28, 190, weather_snapshot.condition)
-    draw.text((70, 189), weather_snapshot.temperature, font=f20, fill=WHITE)
-    draw.text((70, 212), weather_snapshot.description, font=f8, fill=MUTED)
+    draw.text((70, 187), weather_snapshot.temperature, font=f20, fill=WHITE)
+    draw.text((70, 211), weather_snapshot.description, font=f8, fill=MUTED)
+
+    # Vertical divider and Right-side weather stats (eliminates empty space x=162..238)
+    draw.line([(162, 178), (162, 218)], fill=BORDER)
+    draw.text((170, 186), f"H {weather_snapshot.high_c}", font=f8, fill=(255, 120, 80))
+    draw.text((205, 186), f"L {weather_snapshot.low_c}", font=f8, fill=(96, 165, 250))
+    draw.text((170, 204), f"HUM {weather_snapshot.humidity}", font=f8, fill=MUTED)
 
     # Right cards.
     cpu_box = (248, 54, 468, 119)

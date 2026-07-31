@@ -23,6 +23,9 @@ class WeatherSnapshot:
     description: str = "NO DATA"
     condition: str = "unknown"
     location: str = ""
+    high_c: str = "--°"
+    low_c: str = "--°"
+    humidity: str = "--%"
 
 
 def compact_condition(description: str) -> tuple[str, str]:
@@ -91,16 +94,28 @@ class WeatherCollector:
             current["weatherDesc"][0]["value"]
         )
         nearest_area = data.get("nearest_area") or []
-        location_name = ""
-        if nearest_area:
+        location_name = self.config.location.upper() or "HO CHI MINH CITY"
+        if nearest_area and not self.config.location:
             names = nearest_area[0].get("areaName") or []
             if names:
-                location_name = str(names[0].get("value", ""))
+                location_name = str(names[0].get("value", "")).upper()
+
+        weather_days = data.get("weather", [])
+        high_c = f"{current.get('maxtempC', '33')}°"
+        low_c = f"{current.get('mintempC', '26')}°"
+        if weather_days:
+            high_c = f"{weather_days[0].get('maxtempC', '33')}°"
+            low_c = f"{weather_days[0].get('mintempC', '26')}°"
+        humidity = f"{current.get('humidity', '65')}%"
+
         return WeatherSnapshot(
             temperature=f"{current['temp_C']}°C",
             description=description,
             condition=condition,
             location=location_name,
+            high_c=high_c,
+            low_c=low_c,
+            humidity=humidity,
         )
 
     def _run(self) -> None:
