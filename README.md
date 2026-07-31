@@ -26,7 +26,7 @@ A sleek, modern dark-mode dashboard with pure obsidian background, smooth sans-s
 - **Centered Weather & 5-Day Forecast**: Large weather icon, current temperature, high/low/humidity, and full 5-day forecast row (`THU`, `FRI`, `SAT`, `SUN`, `MON`).
 - **Gradient Glow Wave Graphs**: Hardware-accelerated glowing wave graphs for CPU, Temp, Uptime, and Processes.
 
-![NOVA 01 Live GIF Preview](res/themes/NOVA_01/preview.gif)
+![NOVA 01 Live GIF Preview](res/themes/NOVA_01/preview_demo.gif)
 
 ---
 
@@ -36,7 +36,7 @@ A zero-duplication, highly balanced system monitoring theme designed for maximum
 - **Spacious Typography**: Fine-tuned font spacing preventing text overflow or cramped numbers.
 - **Full Card Breakdown**: Dedicated cards for CPU (with 60s history graph), RAM (GiB), SSD (GB), Fan RPM, Temperature, and Network throughput.
 
-![TRUE VIEW 26 Live GIF Preview](res/themes/TRUE_VIEW_26/preview.gif)
+![TRUE VIEW 26 Live GIF Preview](res/themes/TRUE_VIEW_26/preview_demo.gif)
 
 ---
 
@@ -46,7 +46,7 @@ A futuristic Cyberpunk-inspired neon theme featuring real-time visualizers and a
 - **Smooth Wave Graphs**: Hardware-accelerated smooth filled gradient graphs for CPU and GPU.
 - **Live Dot-Matrix Equalizer**: Real-time per-core CPU load visualizer embedded in the top header.
 
-![NEXUS 26 Live GIF Preview](res/themes/NEXUS_26/preview.gif)
+![NEXUS 26 Live GIF Preview](res/themes/NEXUS_26/preview_demo.gif)
 
 ---
 
@@ -55,7 +55,7 @@ A clean, lightweight, minimalist theme focusing on key performance indicators.
 - **High Efficiency**: Minimalist aesthetic with ultra-low CPU footprint.
 - **Essential Metrics**: Large digital clock, Uptime, CPU 60s history graph, RAM, SSD, Fan, Temp, Load, and Processes.
 
-![NEXUS MINIMAL Live GIF Preview](res/themes/NEXUS_MINIMAL/preview.gif)
+![NEXUS MINIMAL Live GIF Preview](res/themes/NEXUS_MINIMAL/preview_demo.gif)
 
 ---
 
@@ -108,7 +108,7 @@ You can also run any theme manually or generate animated GIF previews from comma
 
 ```bash
 # Generate animated GIF preview from live system metrics
-PYTHONPATH=res/themes/NOVA_01 python3 -m nova01 --gif preview.gif --frames 20
+PYTHONPATH=res/themes/NOVA_01 python3 -m nova01 --gif preview_demo.gif --frames 20
 
 # Save static PNG preview snapshot
 PYTHONPATH=res/themes/NOVA_01 python3 -m nova01 --preview preview.png
