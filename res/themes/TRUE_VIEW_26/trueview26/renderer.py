@@ -334,14 +334,14 @@ def render_frame(
     draw.text((27, 147), "UPTIME", font=f9, fill=MUTED)
     _text_right(draw, 238, 145, format_uptime(snapshot.uptime_seconds), f11)
     draw.line([(26, 167), (238, 167)], fill=BORDER)
-    draw.text((27, 178), "WEATHER", font=f9, fill=MUTED)
+    draw.text((27, 174), "WEATHER", font=f9, fill=MUTED)
     location_label = (weather_snapshot.location or "LIVE").upper()
     if len(location_label) > 12:
         location_label = location_label[:11] + "…"
-    _text_right(draw, 238, 178, location_label, font=f8, fill=MUTED)
-    draw_weather(draw, 28, 187, weather_snapshot.condition)
-    draw.text((70, 187), weather_snapshot.temperature, font=f20, fill=WHITE)
-    draw.text((70, 211), weather_snapshot.description, font=f8, fill=MUTED)
+    _text_right(draw, 238, 174, location_label, font=f8, fill=MUTED)
+    draw_weather(draw, 28, 190, weather_snapshot.condition)
+    draw.text((70, 189), weather_snapshot.temperature, font=f20, fill=WHITE)
+    draw.text((70, 212), weather_snapshot.description, font=f8, fill=MUTED)
 
     # Right cards.
     cpu_box = (248, 54, 468, 119)
