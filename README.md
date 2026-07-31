@@ -102,23 +102,6 @@ Set-ExecutionPolicy Bypass -Scope Process -Force
 
 ---
 
-## 🛠️ Standalone & Animated GIF Generation
-
-You can also run any theme manually or generate animated GIF previews from command line:
-
-```bash
-# Generate animated GIF preview from live system metrics
-PYTHONPATH=res/themes/NOVA_01 python3 -m nova01 --gif preview_demo.gif --frames 20
-
-# Save static PNG preview snapshot
-PYTHONPATH=res/themes/NOVA_01 python3 -m nova01 --preview preview.png
-
-# Direct execution to USB display
-PYTHONPATH=res/themes/NOVA_01 python3 res/themes/NOVA_01/run_nova01.py
-```
-
----
-
 ## 🙏 Credits & Acknowledgments
 
 - **Core Project**: Built for and compatible with [turing-smart-screen-python](https://github.com/mathoudebine/turing-smart-screen-python) by [Matthieu Houdebine](https://github.com/mathoudebine).
