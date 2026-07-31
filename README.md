@@ -55,7 +55,13 @@ A clean, lightweight, minimalist theme focusing on key performance indicators.
 - **High Efficiency**: Minimalist aesthetic with ultra-low CPU footprint.
 - **Essential Metrics**: Large digital clock, Uptime, CPU 60s history graph, RAM, SSD, Fan, Temp, Load, and Processes.
 
-![NEXUS MINIMAL Live GIF Preview](res/themes/NEXUS_MINIMAL/preview_demo.gif)
+### 🔷 APEX 01
+A premium dark-navy system monitoring dashboard with custom vector hardware icons, 5-column bottom utility bar, and live weather telemetry.
+- **100% Concept Pinwheel Fan**: Ultra-sharp concept fan asset with live status indicators.
+- **Spacious Weather Telemetry**: High/low temperature range and hollow cyan teardrop humidity stats with generous 8px gap separation.
+- **Full Utility Breakdown**: 5-column utility bar with Uptime, Network (MB/s), Wi-Fi SSID / Ethernet auto-detection, Temp history graph, and Fan RPM.
+
+![APEX 01 Live GIF Preview](res/themes/APEX_01/preview_demo.gif)
 
 ---
 

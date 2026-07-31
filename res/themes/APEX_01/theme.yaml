@@ -1,0 +1,28 @@
+# APEX 01 Flagship Theme Configuration
+name: "APEX 01"
+version: "1.0.0"
+author: "thairc-dev"
+description: "Dark-mode Cyber-Dashboard theme with Neon Green CPU, Purple RAM, and Blue SSD component breakdown."
+
+display:
+  width: 480
+  height: 320
+  brightness: 100
+  fps: 10.0
+  stats_interval: 1.0
+  reconnect_interval: 3.0
+  clean_on_startup: true
+
+device:
+  transport: "auto"
+  port: "AUTO"
+  vendor_id: 0x1A86
+  product_id: 0x5722
+  serial_number: "USB35INCHIPSV2"
+  chunk_size: 4096
+
+weather:
+  enabled: true
+  location: ""
+  units: "metric"
+  update_interval_sec: 1800
