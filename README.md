@@ -55,6 +55,10 @@ A clean, lightweight, minimalist theme focusing on key performance indicators.
 - **High Efficiency**: Minimalist aesthetic with ultra-low CPU footprint.
 - **Essential Metrics**: Large digital clock, Uptime, CPU 60s history graph, RAM, SSD, Fan, Temp, Load, and Processes.
 
+![NEXUS MINIMAL Live GIF Preview](res/themes/NEXUS_MINIMAL/preview_demo.gif)
+
+---
+
 ### 🔷 APEX 01
 A premium dark-navy system monitoring dashboard with custom vector hardware icons, 5-column bottom utility bar, and live weather telemetry.
 - **100% Concept Pinwheel Fan**: Ultra-sharp concept fan asset with live status indicators.
@@ -86,7 +90,10 @@ A premium dark-navy system monitoring dashboard with custom vector hardware icon
    ```
 2. Run the automated installer script for your desired theme:
    ```bash
-   # Install NOVA 01
+   # Install APEX 01 (Theme 5)
+   zsh res/themes/APEX_01/installers/install-macos.sh
+
+   # Or install NOVA 01
    zsh res/themes/NOVA_01/installers/install-macos.sh
 
    # Or install TRUE VIEW 26
@@ -103,7 +110,15 @@ A premium dark-navy system monitoring dashboard with custom vector hardware icon
 Open PowerShell as Administrator:
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force
+
+# Install APEX 01
+.\res\themes\APEX_01\installers\install-windows.ps1
+
+# Or install NOVA 01
 .\res\themes\NOVA_01\installers\install-windows.ps1
+
+# Or install TRUE VIEW 26
+.\res\themes\TRUE_VIEW_26\installers\install-windows.ps1
 ```
 
 ---
