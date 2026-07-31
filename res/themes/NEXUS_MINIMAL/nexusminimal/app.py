@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from logging.handlers import RotatingFileHandler
 import logging
+from pathlib import Path
 import platform
 import signal
 import sys
@@ -61,6 +62,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="NEXUS MINIMAL portable TURZX 3.5 theme")
     parser.add_argument("--config", help="Path to config.yaml")
     parser.add_argument("--preview", metavar="PNG", help="Render a local preview without a display")
+    parser.add_argument("--gif", type=Path, help="Save an animated GIF demo to the specified path and exit")
+    parser.add_argument("--frames", type=int, default=20, help="Number of frames for GIF generation")
     parser.add_argument("--once", action="store_true", help="Exit instead of reconnecting")
     return parser
 
@@ -94,10 +97,25 @@ def main(argv: list[str] | None = None) -> int:
         transport.open()
         try:
             render_session(
-                config, transport, metrics, system_info, stop_event, max_frames=4
+                config, transport, metrics, system_info, stop_event, max_frames=1
             )
             transport.save(args.preview)
             LOG.info("Preview saved to %s", args.preview)
+            return 0
+        finally:
+            transport.close()
+            metrics.stop()
+
+    if args.gif:
+        transport = PreviewTransport(config.display.width, config.display.height)
+        transport.open()
+        try:
+            render_session(
+                config, transport, metrics, system_info, stop_event, max_frames=args.frames
+            )
+            args.gif.parent.mkdir(parents=True, exist_ok=True)
+            transport.save_gif(args.gif, duration=150)
+            LOG.info("Animated GIF saved to %s", args.gif)
             return 0
         finally:
             transport.close()

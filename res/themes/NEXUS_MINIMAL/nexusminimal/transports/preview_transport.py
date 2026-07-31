@@ -9,11 +9,12 @@ from .base import DisplayTransport
 
 
 class PreviewTransport(DisplayTransport):
-    """In-memory display used for previews and CI tests."""
+    """In-memory display used for previews, GIFs, and CI tests."""
 
     def __init__(self, width: int = 480, height: int = 320):
         self.writes: list[bytes] = []
         self.image = Image.new("RGB", (width, height), (0, 0, 0))
+        self.frames: list[Image.Image] = []
         self._region: tuple[int, int, int, int] | None = None
         self._expected = 0
         self._buffer = bytearray()
@@ -52,12 +53,30 @@ class PreviewTransport(DisplayTransport):
             output_index += 3
         region = Image.frombytes("RGB", (x1 - x0 + 1, y1 - y0 + 1), bytes(rgb))
         self.image.paste(region, (x0, y0))
+        if x0 == 0 and y0 == 0 and x1 == 479 and y1 == 319:
+            self.frames.append(self.image.copy())
         self._region = None
         self._expected = 0
         self._buffer.clear()
 
     def save(self, path: str | Path) -> None:
         self.image.save(path)
+
+    def save_gif(self, path: str | Path, duration: int = 150) -> None:
+        if not self.frames:
+            self.frames = [self.image]
+        converted = [
+            f.quantize(colors=256, method=Image.Quantize.MEDIANCUT)
+            for f in self.frames
+        ]
+        converted[0].save(
+            path,
+            save_all=True,
+            append_images=converted[1:],
+            duration=duration,
+            loop=0,
+            optimize=True,
+        )
 
     def close(self) -> None:
         return None
