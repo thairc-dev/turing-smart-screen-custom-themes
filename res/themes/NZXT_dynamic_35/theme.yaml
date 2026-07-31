@@ -1,0 +1,156 @@
+---
+author: "@mathoudebine"
+
+display:
+  DISPLAY_SIZE: 3.5"
+  DISPLAY_ORIENTATION: landscape
+  DISPLAY_RGB_LED: 0, 0, 255
+
+static_images:
+  BACKGROUND:
+    PATH: background.png
+    X: 0
+    Y: 0
+    WIDTH: 480
+    HEIGHT: 320
+static_text:
+  CPU_MODEL:
+   TEXT: I9 10900K
+   X: 48
+   Y: 21
+   FONT: roboto/Roboto-Bold.ttf
+   FONT_SIZE: 19
+   FONT_COLOR: 89, 181, 248
+   # BACKGROUND_COLOR: 255, 255, 255
+   BACKGROUND_IMAGE: background.png
+  GPU_MODEL:
+   TEXT: RTX3080TI
+   X: 188
+   Y: 21
+   FONT: roboto/Roboto-Bold.ttf
+   FONT_SIZE: 19
+   FONT_COLOR: 49, 212, 74
+   # BACKGROUND_COLOR: 255, 255, 255
+   BACKGROUND_IMAGE: background.png
+STATS:
+  CPU:
+    PERCENTAGE:
+      INTERVAL: 1
+      GRAPH:
+        SHOW: True
+        X: 30
+        Y: 89
+        WIDTH: 110
+        HEIGHT: 13
+        MIN_VALUE: 0
+        MAX_VALUE: 100
+        BAR_COLOR: 255, 255, 255
+        BAR_OUTLINE: False
+        BACKGROUND_IMAGE: background.png
+    TEMPERATURE:
+      INTERVAL: 5
+      TEXT:
+        SHOW: True
+        SHOW_UNIT: True
+        X: 62
+        Y: 49
+        FONT: jetbrains-mono/JetBrainsMono-Bold.ttf
+        FONT_SIZE: 29
+        FONT_COLOR: 0, 0, 0
+        BACKGROUND_IMAGE: background.png
+  GPU:
+    INTERVAL: 1
+    PERCENTAGE:
+      GRAPH:
+        SHOW: True
+        X: 174
+        Y: 89
+        WIDTH: 110
+        HEIGHT: 13
+        MIN_VALUE: 0
+        MAX_VALUE: 100
+        BAR_COLOR: 255, 255, 255
+        BAR_OUTLINE: False
+        BACKGROUND_IMAGE: background.png
+    TEMPERATURE:
+      TEXT:
+        SHOW: True
+        SHOW_UNIT: True
+        X: 204
+        Y: 49
+        FONT: jetbrains-mono/JetBrainsMono-Bold.ttf
+        FONT_SIZE: 29
+        FONT_COLOR: 0, 0, 0
+        BACKGROUND_IMAGE: background.png
+  MEMORY:
+    INTERVAL: 5
+    VIRTUAL:
+      PERCENT_TEXT:
+        SHOW: True
+        SHOW_UNIT: True
+        X: 76
+        Y: 157
+        FONT: jetbrains-mono/JetBrainsMono-Bold.ttf
+        FONT_SIZE: 29
+        FONT_COLOR: 0, 0, 0
+        BACKGROUND_IMAGE: background.png
+  DISK:
+    INTERVAL: 10
+    USED:
+      PERCENT_TEXT:
+        SHOW: True
+        SHOW_UNIT: True
+        X: 223
+        Y: 157
+        FONT: jetbrains-mono/JetBrainsMono-Bold.ttf
+        FONT_SIZE: 29
+        FONT_COLOR: 0, 0, 0
+        BACKGROUND_IMAGE: background.png
+  NET:
+    INTERVAL: 1
+    ETH:
+      UPLOAD:
+        TEXT:
+          SHOW: True
+          X: 72
+          Y: 263
+          FONT: jetbrains-mono/JetBrainsMono-Bold.ttf
+          FONT_SIZE: 14
+          FONT_COLOR: 0, 0, 0
+          BACKGROUND_IMAGE: background.png
+      DOWNLOAD:
+        TEXT:
+          SHOW: True
+          X: 216
+          Y: 263
+          FONT: jetbrains-mono/JetBrainsMono-Bold.ttf
+          FONT_SIZE: 14
+          FONT_COLOR: 0, 0, 0
+          BACKGROUND_IMAGE: background.png
+  DATE:
+    # For time display, it is recommended not to change the interval: keep to 1
+    INTERVAL: 1
+    DAY: # Format (Y/M/D ordering, month/day translations...) will match your computer locale
+      TEXT:
+        FORMAT: short # short (2/20/23) / medium (Feb 20, 2023) / long (February 20, 2023) / full (Monday, February 20, 2023)
+        SHOW: True
+        X: 301
+        Y: 288
+        FONT: jetbrains-mono/JetBrainsMono-Bold.ttf
+        FONT_SIZE: 8
+        FONT_COLOR: 255, 255, 255
+        BACKGROUND_IMAGE: background.png
+        WIDTH: 72
+        ANCHOR: rt
+    HOUR: # Format (12/24h, timezone translations) will match your computer locale
+      TEXT:
+        FORMAT: medium # short (6:48 PM) / medium (6:48:53 PM) / long (6:48:53 PM UTC) / full (6:48:53 PM Coordinated Universal Time)
+        SHOW: True
+        X: 377
+        Y: 277
+        FONT: jetbrains-mono/JetBrainsMono-Bold.ttf
+        FONT_SIZE: 16
+        FONT_COLOR: 255, 255, 255
+        BACKGROUND_IMAGE: background.png
+        WIDTH: 96
+        ANCHOR: lt

@@ -53,8 +53,7 @@ class PreviewTransport(DisplayTransport):
             output_index += 3
         region = Image.frombytes("RGB", (x1 - x0 + 1, y1 - y0 + 1), bytes(rgb))
         self.image.paste(region, (x0, y0))
-        # Record composite frame for full frames or partial ring updates
-        if (x0 == 0 and y0 == 0 and x1 == 479 and y1 == 319) or (x0 == 268 and y0 == 50):
+        if x0 == 0 and y0 == 0 and x1 == 479 and y1 == 319:
             self.frames.append(self.image.copy())
         self._region = None
         self._expected = 0
