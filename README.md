@@ -61,7 +61,7 @@ A clean, lightweight, minimalist theme focusing on key performance indicators.
 
 ### 🔷 APEX 01
 A premium dark-navy system monitoring dashboard with custom vector hardware icons, 5-column bottom utility bar, and live weather telemetry.
-- **100% Concept Pinwheel Fan**: Ultra-sharp concept fan asset with live status indicators.
+- **Obsidian Navy Aesthetics**: High-contrast `#070B19` navy design with custom vector hardware icons.
 - **Spacious Weather Telemetry**: High/low temperature range and hollow cyan teardrop humidity stats with generous 8px gap separation.
 - **Full Utility Breakdown**: 5-column utility bar with Uptime, Network (MB/s), Wi-Fi SSID / Ethernet auto-detection, Temp history graph, and Fan RPM.
 
