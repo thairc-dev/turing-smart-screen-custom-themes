@@ -22,6 +22,8 @@ class SerialTransport(DisplayTransport):
             return self.config.port
         candidates = []
         for port in comports():
+            if "usbserial-2120" in port.device:
+                continue
             if self.config.serial_number and port.serial_number == self.config.serial_number:
                 return port.device
             if port.vid == self.config.vendor_id and port.pid == self.config.product_id:
