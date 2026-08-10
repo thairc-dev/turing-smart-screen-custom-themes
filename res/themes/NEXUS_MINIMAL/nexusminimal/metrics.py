@@ -124,7 +124,7 @@ class MetricsCollector:
         self._stop.clear()
         if self._platform_sensors:
             self._platform_sensors.start()
-        self._thread = threading.Thread(target=self._run, name="trueview26-metrics", daemon=True)
+        self._thread = threading.Thread(target=self._run, name="nexusminimal-metrics", daemon=True)
         self._thread.start()
 
     def stop(self) -> None:
