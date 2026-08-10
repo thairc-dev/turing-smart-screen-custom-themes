@@ -484,14 +484,18 @@ def render_frame(
     draw_fan_blade_icon(d, 386, 264, WHITE, image=image)
     d.text((415, 258), "FAN", fill=WHITE, font=fMedium)
     fan_rpm = snapshot.fan_rpm
-    fan_status = "SILENT" if fan_rpm is None or fan_rpm == 0 else "ACTIVE"
-    rpm_str = "0" if fan_rpm is None else str(fan_rpm)
-    if len(rpm_str) <= 2:
-        d.text((415, 270), rpm_str, fill=WHITE, font=fHeaderTime)
-        d.text((426, 274), "RPM", fill=WHITE, font=fNano)
+    if fan_rpm is None:
+        d.text((415, 268), "N/A", fill=(140, 140, 140), font=fMicro)
+        d.text((415, 290), "NO SENSOR", fill=(120, 120, 120), font=fNano)
     else:
-        d.text((415, 272), f"{rpm_str} RPM", fill=WHITE, font=fMicro)
-    d.text((415, 290), fan_status, fill=(160, 190, 220), font=fNano)
+        fan_status = "SILENT" if fan_rpm == 0 else "ACTIVE"
+        rpm_str = str(fan_rpm)
+        if len(rpm_str) <= 2:
+            d.text((415, 270), rpm_str, fill=WHITE, font=fHeaderTime)
+            d.text((426, 274), "RPM", fill=WHITE, font=fNano)
+        else:
+            d.text((415, 272), f"{rpm_str} RPM", fill=WHITE, font=fMicro)
+        d.text((415, 290), fan_status, fill=(160, 190, 220), font=fNano)
 
     return image
 
@@ -550,7 +554,7 @@ def render_session(
 
     initial_snapshot = metrics.snapshot()
     cpu_history = [initial_snapshot.cpu_percent] * 24
-    initial_temp = initial_snapshot.cpu_temp_c or 48.0
+    initial_temp = initial_snapshot.cpu_temp_c if initial_snapshot.cpu_temp_c is not None else 0.0
     temp_history = [initial_temp] * 24
     frame_count = 0
 
@@ -568,7 +572,7 @@ def render_session(
         if len(cpu_history) > 24:
             cpu_history.pop(0)
 
-        current_temp = snapshot.cpu_temp_c or 48.0
+        current_temp = snapshot.cpu_temp_c if snapshot.cpu_temp_c is not None else 0.0
         temp_history.append(current_temp)
         if len(temp_history) > 24:
             temp_history.pop(0)

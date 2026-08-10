@@ -313,10 +313,10 @@ def render_session(
         fClock = fWeatherTemp = fBigVal = fTitle = fDate = fMedium = fSmall = fMicro = fNano = ImageFont.load_default()
 
     initial = metrics.snapshot()
-    cpu_history = deque([15 + 10 * math.sin(i * 0.5) for i in range(30)], maxlen=30)
-    temp_history = deque([initial.cpu_temp_c or 48.0 + 3 * math.sin(i * 0.4) for i in range(30)], maxlen=30)
-    procs_history = deque([initial.process_count + int(5 * math.sin(i * 0.6)) for i in range(30)], maxlen=30)
-    uptime_history = deque([30.0 + i * 2 for i in range(30)], maxlen=30)
+    cpu_history = deque([initial.cpu_percent] * 30, maxlen=30)
+    temp_history = deque([initial.cpu_temp_c if initial.cpu_temp_c is not None else 0.0] * 30, maxlen=30)
+    procs_history = deque([initial.process_count] * 30, maxlen=30)
+    uptime_history = deque([0.0] * 30, maxlen=30)
 
     frames = 0
     LOG.info("NOVA 01 renderer started (%s, %s)", system_info.kind, system_info.model)
@@ -328,7 +328,7 @@ def render_session(
         snapshot = metrics.snapshot()
         weather_snap = weather.snapshot()
         cpu_history.append(snapshot.cpu_percent)
-        temp_val = snapshot.cpu_temp_c if snapshot.cpu_temp_c is not None else 48.0
+        temp_val = snapshot.cpu_temp_c if snapshot.cpu_temp_c is not None else 0.0
         temp_history.append(temp_val)
         procs_history.append(snapshot.process_count)
 
@@ -359,7 +359,7 @@ def render_session(
 
         # Computer Icon & Mac model inside top of Left Container
         draw_computer_icon(d, 22, 18, TEXT_WHITE)
-        d.text((50, 15), "Mac mini M4", font=fTitle, fill=TEXT_WHITE)
+        d.text((50, 15), display_model_name(system_info), font=fTitle, fill=TEXT_WHITE)
         d.text((50, 30), system_info.os_version, font=fMicro, fill=TEXT_MUTED)
 
         # Centered Clock & Date with generous breathing room
@@ -378,7 +378,7 @@ def render_session(
 
         # Weather Section PERFECTLY CENTERED (Icon x=34..66, Text x=74..162, Divider x=172, Stats x=180..215)
         draw_huge_weather_icon(d, 34, 130, weather_snap.condition)
-        d.text((74, 126), weather_snap.location or "HO CHI MINH CITY", font=fNano, fill=TEXT_MUTED)
+        d.text((74, 126), weather_snap.location or "--", font=fNano, fill=TEXT_MUTED)
         d.text((74, 136), weather_snap.temperature, font=fWeatherTemp, fill=TEXT_WHITE)
         d.text((74, 162), weather_snap.description, font=fMicro, fill=TEXT_MUTED)
 
@@ -431,7 +431,7 @@ def render_session(
 
         d.text((316, 54), "CPU", font=fMedium, fill=TEXT_WHITE)
         draw_glowing_wave_graph(d, (316, 68, 460, 86), cpu_history, CYAN)
-        freq_str = f"{snapshot.cpu_frequency_ghz:.1f} GHz" if snapshot.cpu_frequency_ghz else "2.8 GHz"
+        freq_str = f"{snapshot.cpu_frequency_ghz:.1f} GHz" if snapshot.cpu_frequency_ghz else "N/A"
         d.text((316, 90), freq_str, font=fNano, fill=TEXT_MUTED)
         d.text((430, 90), "60 sec", font=fNano, fill=TEXT_MUTED)
 

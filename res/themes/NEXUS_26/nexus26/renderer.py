@@ -152,12 +152,14 @@ def draw_concept_smooth_wave_graph(draw, box, history, line_color=(192, 132, 252
     x0, y0, x1, y1 = box
     w = x1 - x0
     h = y1 - y0
-    if len(history) < 2 or w <= 0 or h <= 0:
+    real = [(i, v) for i, v in enumerate(history) if v is not None]
+    if len(real) < 2 or w <= 0 or h <= 0:
+        draw.line([(x0, y1), (x1, y1)], fill=(60, 60, 60), width=1)
         return
 
     num = len(history)
     line_pts = []
-    for i, val in enumerate(history):
+    for i, val in real:
         px = x0 + int((i / (num - 1)) * w)
         py = y1 - int(((max(0.0, min(100.0, float(val))) / 100.0) * (h - 2)))
         py = max(y0, min(y1, py))
@@ -391,8 +393,8 @@ def render_session(
 
     initial_snapshot = metrics.snapshot()
     cpu_history = [initial_snapshot.cpu_percent] * 24
-    initial_gpu = initial_snapshot.gpu_percent or 0.0
-    gpu_history = [initial_gpu] * 24
+    initial_gpu = initial_snapshot.gpu_percent  # may be None
+    gpu_history = [initial_gpu if initial_gpu is not None else None] * 24
     smooth_per_core = [0.0] * max(1, len(initial_snapshot.per_core))
     frame_count = 0
 
@@ -413,7 +415,7 @@ def render_session(
         snapshot = metrics.snapshot()
         weather_snapshot = weather.snapshot()
         cpu = int(snapshot.cpu_percent)
-        gpu = 0 if snapshot.gpu_percent is None else int(snapshot.gpu_percent)
+        gpu = None if snapshot.gpu_percent is None else int(snapshot.gpu_percent)
         rp = int(snapshot.ram_percent)
         dp = int(snapshot.disk_percent)
         cpu_temp = "--" if snapshot.cpu_temp_c is None else f"{snapshot.cpu_temp_c:.0f}"
