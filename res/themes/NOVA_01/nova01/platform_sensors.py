@@ -152,9 +152,14 @@ class WindowsSensorSampler:
         self._nvml_active = False
         self._wmi_handle = None
         self._lock = threading.Lock()
-        self.start()
+        self._initialized = False
 
     def start(self) -> None:
+        # Guard: only initialize hardware libraries once
+        if self._initialized:
+            return
+        self._initialized = True
+
         # 1. Try LibreHardwareMonitorLib.dll via pythonnet / clr
         try:
             import clr
