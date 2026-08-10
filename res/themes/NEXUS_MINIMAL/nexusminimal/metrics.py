@@ -12,7 +12,7 @@ import time
 
 import psutil
 
-from .platform_sensors import MacSensorSampler
+from .platform_sensors import create_platform_sensor_sampler
 
 
 @dataclass(frozen=True)
@@ -110,7 +110,7 @@ class MetricsCollector:
         self._lock = threading.Lock()
         self._stop = threading.Event()
         self._thread: threading.Thread | None = None
-        self._mac_sensors = MacSensorSampler(round(self.interval * 1000)) if platform.system() == "Darwin" else None
+        self._platform_sensors = create_platform_sensor_sampler(round(self.interval * 1000))
         self._configured_network_interface = network_interface
         self._network_interface = self._detect_network_interface()
         self._disk_cache = (0.0, 0.0, 0.0)
@@ -122,17 +122,17 @@ class MetricsCollector:
         psutil.cpu_percent(interval=None)
         psutil.cpu_percent(interval=None, percpu=True)
         self._stop.clear()
-        if self._mac_sensors:
-            self._mac_sensors.start()
-        self._thread = threading.Thread(target=self._run, name="nexusminimal-metrics", daemon=True)
+        if self._platform_sensors:
+            self._platform_sensors.start()
+        self._thread = threading.Thread(target=self._run, name="trueview26-metrics", daemon=True)
         self._thread.start()
 
     def stop(self) -> None:
         self._stop.set()
         if self._thread:
             self._thread.join(timeout=2)
-        if self._mac_sensors:
-            self._mac_sensors.stop()
+        if self._platform_sensors:
+            self._platform_sensors.stop()
 
     def snapshot(self) -> MetricsSnapshot:
         with self._lock:
@@ -234,7 +234,7 @@ class MetricsCollector:
                 gpu_percent = cpu_temp = gpu_temp = None
                 fan_rpm = None
                 sensor_ram_used = sensor_ram_total = None
-                if self._mac_sensors:
+                if self._platform_sensors:
                     (
                         gpu_percent,
                         cpu_temp,
@@ -242,7 +242,7 @@ class MetricsCollector:
                         fan_rpm,
                         sensor_ram_used,
                         sensor_ram_total,
-                    ) = self._mac_sensors.snapshot()
+                    ) = self._platform_sensors.snapshot()
                 if sensor_ram_used is not None and sensor_ram_total:
                     ram_used_bytes = sensor_ram_used
                     ram_total_bytes = sensor_ram_total

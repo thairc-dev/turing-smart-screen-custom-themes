@@ -44,18 +44,15 @@ class SerialTransport(DisplayTransport):
             raise TransportError(f"Không mở được cổng {port}: {exc}") from exc
 
     def write(self, data: bytes | bytearray | memoryview, timeout_ms: int = 1000) -> None:
+        del timeout_ms
         if self.connection is None:
             raise TransportError("Serial transport is not open")
-        self.connection.write_timeout = max(0.1, timeout_ms / 1000)
         try:
             written = self.connection.write(data)
-            self.connection.flush()
         except (OSError, serial.SerialException) as exc:
             raise TransportError(f"Serial write failed: {exc}") from exc
         if written != len(data):
             raise TransportError(f"Short serial write: {written}/{len(data)} bytes")
-        if len(data) > 4096:
-            time.sleep(0.001)
 
     def close(self) -> None:
         if self.connection is not None:

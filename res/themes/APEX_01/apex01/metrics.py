@@ -12,7 +12,7 @@ import time
 
 import psutil
 
-from .platform_sensors import MacSensorSampler
+from .platform_sensors import create_platform_sensor_sampler
 
 
 @dataclass(frozen=True)
@@ -25,8 +25,8 @@ class SystemInfo:
 @dataclass(frozen=True)
 class MetricsSnapshot:
     cpu_percent: float = 0.0
-    cpu_freq_ghz: float = 2.8
     per_core: tuple[float, ...] = ()
+    cpu_frequency_ghz: float | None = None
     cpu_temp_c: float | None = None
     gpu_percent: float | None = None
     gpu_temp_c: float | None = None
@@ -39,11 +39,14 @@ class MetricsSnapshot:
     net_up_mb_s: float = 0.0
     net_down_mb_s: float = 0.0
     network_interface: str = ""
-    ip_address: str = "10.0.0.123"
-    wifi_name: str = "WiFi 6"
+    load_average_1m: float | None = None
+    process_count: int = 0
     fan_rpm: int | None = None
     uptime_seconds: int = 0
     warning: bool = False
+    health_status: str = "GOOD"
+    health_line1: str = "All systems"
+    health_line2: str = "operational"
 
 
 def detect_system_info() -> SystemInfo:
@@ -74,6 +77,26 @@ def display_model_name(info: SystemInfo, max_chars: int = 20) -> str:
     return model if len(model) <= max_chars else model[: max_chars - 1].rstrip() + "…"
 
 
+def classify_health(
+    cpu_percent: float,
+    gpu_percent: float | None,
+    ram_percent: float,
+    disk_percent: float,
+    cpu_temp_c: float | None,
+    gpu_temp_c: float | None,
+) -> tuple[str, str, str]:
+    hottest = max(value for value in (cpu_temp_c, gpu_temp_c, 0.0) if value is not None)
+    if hottest >= 95:
+        return "HOT", "Thermal limit", "approaching"
+    if cpu_percent >= 95 or (gpu_percent is not None and gpu_percent >= 95):
+        return "HEAVY", "Resource load", "elevated"
+    if ram_percent >= 95:
+        return "MEMORY", "Memory use", "critically high"
+    if disk_percent >= 90:
+        return "DISK", "Free space", "running low"
+    return "GOOD", "All systems", "operational"
+
+
 def network_rate_mb_s(current_bytes: int, previous_bytes: int, elapsed: float) -> float:
     if elapsed <= 0:
         return 0.0
@@ -87,11 +110,9 @@ class MetricsCollector:
         self._lock = threading.Lock()
         self._stop = threading.Event()
         self._thread: threading.Thread | None = None
-        self._mac_sensors = MacSensorSampler(round(self.interval * 1000)) if platform.system() == "Darwin" else None
+        self._platform_sensors = create_platform_sensor_sampler(round(self.interval * 1000))
         self._configured_network_interface = network_interface
         self._network_interface = self._detect_network_interface()
-        self._ip_address = self._detect_ip_address()
-        self._wifi_name = self._detect_wifi_name()
         self._disk_cache = (0.0, 0.0, 0.0)
         self._last_disk_refresh = 0.0
 
@@ -101,17 +122,17 @@ class MetricsCollector:
         psutil.cpu_percent(interval=None)
         psutil.cpu_percent(interval=None, percpu=True)
         self._stop.clear()
-        if self._mac_sensors:
-            self._mac_sensors.start()
-        self._thread = threading.Thread(target=self._run, name="apex01-metrics", daemon=True)
+        if self._platform_sensors:
+            self._platform_sensors.start()
+        self._thread = threading.Thread(target=self._run, name="trueview26-metrics", daemon=True)
         self._thread.start()
 
     def stop(self) -> None:
         self._stop.set()
         if self._thread:
             self._thread.join(timeout=2)
-        if self._mac_sensors:
-            self._mac_sensors.stop()
+        if self._platform_sensors:
+            self._platform_sensors.stop()
 
     def snapshot(self) -> MetricsSnapshot:
         with self._lock:
@@ -121,57 +142,6 @@ class MetricsCollector:
     def _disk_root() -> str:
         anchor = Path.home().anchor
         return anchor or "/"
-
-    def _detect_ip_address(self) -> str:
-        try:
-            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as probe:
-                probe.connect(("1.1.1.1", 80))
-                return probe.getsockname()[0]
-        except OSError:
-            return "10.0.0.123"
-
-    def _detect_wifi_name(self) -> str:
-        sys_name = platform.system()
-        if sys_name == "Darwin":
-            try:
-                out = subprocess.check_output(["networksetup", "-listallhardwareports"], text=True, timeout=2)
-                wifi_iface = None
-                lines = out.splitlines()
-                for i, line in enumerate(lines):
-                    if "Wi-Fi" in line or "AirPort" in line:
-                        if i + 1 < len(lines) and "Device:" in lines[i+1]:
-                            wifi_iface = lines[i+1].split(":")[1].strip()
-                            break
-                if wifi_iface:
-                    out2 = subprocess.check_output(["networksetup", "-getairportnetwork", wifi_iface], text=True, timeout=2)
-                    match = re.search(r"Current Wi-Fi Network:\s*(.+)", out2)
-                    if match:
-                        ssid = match.group(1).strip()
-                        if ssid and "not associated" not in ssid.lower():
-                            return ssid[:12]
-            except Exception:
-                pass
-        elif sys_name == "Windows":
-            try:
-                out = subprocess.check_output("netsh wlan show interfaces", text=True, timeout=2, shell=True)
-                for line in out.splitlines():
-                    if "SSID" in line and "BSSID" not in line:
-                        parts = line.split(":", 1)
-                        if len(parts) > 1:
-                            ssid = parts[1].strip()
-                            if ssid:
-                                return ssid[:12]
-            except Exception:
-                pass
-        elif sys_name == "Linux":
-            try:
-                out = subprocess.check_output(["iwgetid", "-r"], text=True, timeout=2)
-                ssid = out.strip()
-                if ssid:
-                    return ssid[:12]
-            except Exception:
-                pass
-        return "Ethernet" if "en0" in self._network_interface or "eth" in self._network_interface else "WiFi 6"
 
     def _detect_network_interface(self) -> str:
         if self._configured_network_interface.lower() != "auto":
@@ -251,15 +221,20 @@ class MetricsCollector:
                 disk_percent, disk_used_gb, disk_total_gb = self._cached_disk_stats(current_time)
                 cpu = float(psutil.cpu_percent(interval=None))
                 per_core = tuple(float(value) for value in psutil.cpu_percent(interval=None, percpu=True))
-                
-                # CPU Frequency
-                freq = psutil.cpu_freq()
-                cpu_freq_ghz = round(freq.current / 1000.0, 1) if freq and freq.current > 0 else 2.8
-
+                frequency = psutil.cpu_freq()
+                frequency_ghz = None
+                if frequency and frequency.current > 0:
+                    # psutil reports MHz on most platforms, but recent macOS
+                    # builds expose Apple Silicon frequency directly in GHz.
+                    frequency_ghz = (
+                        float(frequency.current)
+                        if frequency.current <= 20
+                        else float(frequency.current) / 1000
+                    )
                 gpu_percent = cpu_temp = gpu_temp = None
                 fan_rpm = None
                 sensor_ram_used = sensor_ram_total = None
-                if self._mac_sensors:
+                if self._platform_sensors:
                     (
                         gpu_percent,
                         cpu_temp,
@@ -267,7 +242,7 @@ class MetricsCollector:
                         fan_rpm,
                         sensor_ram_used,
                         sensor_ram_total,
-                    ) = self._mac_sensors.snapshot()
+                    ) = self._platform_sensors.snapshot()
                 if sensor_ram_used is not None and sensor_ram_total:
                     ram_used_bytes = sensor_ram_used
                     ram_total_bytes = sensor_ram_total
@@ -279,14 +254,26 @@ class MetricsCollector:
                 if previous_net is not None and current_net is not None:
                     up = network_rate_mb_s(current_net.bytes_sent, previous_net.bytes_sent, elapsed)
                     down = network_rate_mb_s(current_net.bytes_recv, previous_net.bytes_recv, elapsed)
-
-                hottest_temp = max(value for value in (cpu_temp, gpu_temp, 0.0) if value is not None)
-                warning = cpu >= 90 or ram_percent >= 90 or disk_percent >= 90 or hottest_temp >= 90
-
+                health_status, health_line1, health_line2 = classify_health(
+                    cpu,
+                    gpu_percent,
+                    ram_percent,
+                    disk_percent,
+                    cpu_temp,
+                    gpu_temp,
+                )
+                try:
+                    load_average_1m = float(psutil.getloadavg()[0])
+                except (AttributeError, OSError):
+                    load_average_1m = None
+                try:
+                    process_count = len(psutil.pids())
+                except psutil.Error:
+                    process_count = 0
                 snapshot = MetricsSnapshot(
                     cpu_percent=cpu,
-                    cpu_freq_ghz=cpu_freq_ghz,
                     per_core=per_core,
+                    cpu_frequency_ghz=frequency_ghz,
                     ram_percent=ram_percent,
                     ram_used_gb=ram_used_bytes / 1024**3,
                     ram_total_gb=ram_total_bytes / 1024**3,
@@ -299,11 +286,14 @@ class MetricsCollector:
                     net_up_mb_s=up,
                     net_down_mb_s=down,
                     network_interface=self._network_interface,
-                    ip_address=self._ip_address,
-                    wifi_name=self._wifi_name,
+                    load_average_1m=load_average_1m,
+                    process_count=process_count,
                     fan_rpm=fan_rpm,
                     uptime_seconds=max(0, int(time.time() - psutil.boot_time())),
-                    warning=warning,
+                    warning=health_status != "GOOD",
+                    health_status=health_status,
+                    health_line1=health_line1,
+                    health_line2=health_line2,
                 )
                 with self._lock:
                     self._snapshot = snapshot

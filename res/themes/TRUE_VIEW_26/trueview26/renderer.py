@@ -462,6 +462,7 @@ def _send_frame(transport, image, chunk_size):
     payload = image_to_rgb565le(image)
     for offset in range(0, len(payload), chunk_size):
         transport.write(payload[offset:offset + chunk_size], timeout_ms=2000)
+        time.sleep(0.001)
     # Rev-A requires a short gap between bitmap payload and the next command.
     time.sleep(0.025)
 

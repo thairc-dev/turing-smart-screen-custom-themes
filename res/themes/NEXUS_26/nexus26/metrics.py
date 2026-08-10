@@ -12,7 +12,7 @@ import time
 
 import psutil
 
-from .platform_sensors import MacSensorSampler
+from .platform_sensors import create_platform_sensor_sampler
 
 
 @dataclass(frozen=True)
@@ -26,6 +26,7 @@ class SystemInfo:
 class MetricsSnapshot:
     cpu_percent: float = 0.0
     per_core: tuple[float, ...] = ()
+    cpu_frequency_ghz: float | None = None
     cpu_temp_c: float | None = None
     gpu_percent: float | None = None
     gpu_temp_c: float | None = None
@@ -38,6 +39,8 @@ class MetricsSnapshot:
     net_up_mb_s: float = 0.0
     net_down_mb_s: float = 0.0
     network_interface: str = ""
+    load_average_1m: float | None = None
+    process_count: int = 0
     fan_rpm: int | None = None
     uptime_seconds: int = 0
     warning: bool = False
@@ -107,7 +110,7 @@ class MetricsCollector:
         self._lock = threading.Lock()
         self._stop = threading.Event()
         self._thread: threading.Thread | None = None
-        self._mac_sensors = MacSensorSampler(round(self.interval * 1000)) if platform.system() == "Darwin" else None
+        self._platform_sensors = create_platform_sensor_sampler(round(self.interval * 1000))
         self._configured_network_interface = network_interface
         self._network_interface = self._detect_network_interface()
         self._disk_cache = (0.0, 0.0, 0.0)
@@ -119,17 +122,17 @@ class MetricsCollector:
         psutil.cpu_percent(interval=None)
         psutil.cpu_percent(interval=None, percpu=True)
         self._stop.clear()
-        if self._mac_sensors:
-            self._mac_sensors.start()
-        self._thread = threading.Thread(target=self._run, name="nexus26-metrics", daemon=True)
+        if self._platform_sensors:
+            self._platform_sensors.start()
+        self._thread = threading.Thread(target=self._run, name="trueview26-metrics", daemon=True)
         self._thread.start()
 
     def stop(self) -> None:
         self._stop.set()
         if self._thread:
             self._thread.join(timeout=2)
-        if self._mac_sensors:
-            self._mac_sensors.stop()
+        if self._platform_sensors:
+            self._platform_sensors.stop()
 
     def snapshot(self) -> MetricsSnapshot:
         with self._lock:
@@ -218,10 +221,20 @@ class MetricsCollector:
                 disk_percent, disk_used_gb, disk_total_gb = self._cached_disk_stats(current_time)
                 cpu = float(psutil.cpu_percent(interval=None))
                 per_core = tuple(float(value) for value in psutil.cpu_percent(interval=None, percpu=True))
+                frequency = psutil.cpu_freq()
+                frequency_ghz = None
+                if frequency and frequency.current > 0:
+                    # psutil reports MHz on most platforms, but recent macOS
+                    # builds expose Apple Silicon frequency directly in GHz.
+                    frequency_ghz = (
+                        float(frequency.current)
+                        if frequency.current <= 20
+                        else float(frequency.current) / 1000
+                    )
                 gpu_percent = cpu_temp = gpu_temp = None
                 fan_rpm = None
                 sensor_ram_used = sensor_ram_total = None
-                if self._mac_sensors:
+                if self._platform_sensors:
                     (
                         gpu_percent,
                         cpu_temp,
@@ -229,7 +242,7 @@ class MetricsCollector:
                         fan_rpm,
                         sensor_ram_used,
                         sensor_ram_total,
-                    ) = self._mac_sensors.snapshot()
+                    ) = self._platform_sensors.snapshot()
                 if sensor_ram_used is not None and sensor_ram_total:
                     ram_used_bytes = sensor_ram_used
                     ram_total_bytes = sensor_ram_total
@@ -249,9 +262,18 @@ class MetricsCollector:
                     cpu_temp,
                     gpu_temp,
                 )
+                try:
+                    load_average_1m = float(psutil.getloadavg()[0])
+                except (AttributeError, OSError):
+                    load_average_1m = None
+                try:
+                    process_count = len(psutil.pids())
+                except psutil.Error:
+                    process_count = 0
                 snapshot = MetricsSnapshot(
                     cpu_percent=cpu,
                     per_core=per_core,
+                    cpu_frequency_ghz=frequency_ghz,
                     ram_percent=ram_percent,
                     ram_used_gb=ram_used_bytes / 1024**3,
                     ram_total_gb=ram_total_bytes / 1024**3,
@@ -264,6 +286,8 @@ class MetricsCollector:
                     net_up_mb_s=up,
                     net_down_mb_s=down,
                     network_interface=self._network_interface,
+                    load_average_1m=load_average_1m,
+                    process_count=process_count,
                     fan_rpm=fan_rpm,
                     uptime_seconds=max(0, int(time.time() - psutil.boot_time())),
                     warning=health_status != "GOOD",
