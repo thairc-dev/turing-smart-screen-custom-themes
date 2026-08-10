@@ -340,7 +340,7 @@ def render_frame(
     d.line([(254, 14), (254, 76)], fill=BORDER, width=1)
     d.text((264, 14), "CPU", fill=WHITE, font=fTitle)
     cpu = int(snapshot.cpu_percent)
-    freq_str = f"{snapshot.cpu_freq_ghz:.1f} GHz"
+    freq_str = f"{snapshot.cpu_frequency_ghz:.1f} GHz" if snapshot.cpu_frequency_ghz else "N/A"
     d.text((264, 32), f"{cpu}%", fill=GREEN, font=fBigVal)
     w_freq = d.textlength(freq_str, font=fMedium)
     d.text((454 - w_freq, 14), freq_str, fill=WHITE, font=fMedium)
@@ -466,10 +466,12 @@ def render_frame(
 
     # Column 3: WiFi / IP (X=196..288)
     draw_wifi_arc_icon(d, 202, 258, CYAN)
-    wifi_disp = snapshot.wifi_name[:9] if len(snapshot.wifi_name) > 9 else snapshot.wifi_name
+    wifi_disp = (snapshot.network_interface or "NET").upper()
+    if len(wifi_disp) > 9:
+        wifi_disp = wifi_disp[:9]
     d.text((232, 260), wifi_disp, fill=WHITE, font=fMedium)
 
-    ip_str = snapshot.ip_address
+    ip_str = "ONLINE" if (snapshot.net_up_mb_s > 0 or snapshot.net_down_mb_s > 0) else "READY"
     w_ip = d.textlength(ip_str, font=fCardVal)
     d.text((196 + int((92 - w_ip) / 2), 284), ip_str, fill=CYAN, font=fCardVal)
 

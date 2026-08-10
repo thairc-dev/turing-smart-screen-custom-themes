@@ -87,7 +87,6 @@ class Nexus26Tests(unittest.TestCase):
             draw,
             x_start=1,
             y_base=25,
-            m_time=0,
             per_core=(0, 100),
             color=(168, 85, 247),
         )
